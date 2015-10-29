@@ -26,6 +26,20 @@ Template.postEdit.events({
       return Session.set('postEditErrors', errors);
     }
 
+    Meteor.call('postUpdate', currentPostId, postProperties, function(error, result) {
+      // display the error to the user and abort
+      if (error) {
+        return throwError(error.reason);
+      }
+
+    // show this result but route anyway
+      if (result.postExists) {
+        throwError('This link has already been posted');
+      }
+    
+      Router.go('postPage', {_id: result._id});  
+    });
+/*
     Posts.update(currentPostId, {$set: postProperties}, function(error) {
       if (error) {
         // display the error to the user
@@ -34,6 +48,7 @@ Template.postEdit.events({
         Router.go('postPage', {_id: currentPostId});
       }
     });
+*/
   },
 
   'click .delete': function(e) {
